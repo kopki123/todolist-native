@@ -1,8 +1,12 @@
+import {
+  getNotCheckedTemplate,
+  getEditTemplate,
+  getCheckedTemplate,
+} from "./template.js";
+
 //selectors
-const todoList = document.querySelector(".todo-list");
 const form = document.querySelector(".todo-form");
 const todoInput = document.getElementById("todo-input");
-const submitBtn = document.getElementById("submit-btn");
 const todos = document.querySelector(".todos");
 const allTodoCount = document.getElementById("allTodo-count");
 const doneTodoCount = document.getElementById("doneTodo-count");
@@ -32,20 +36,7 @@ function addTodo(e) {
   dataId.value = id;
   todo.setAttributeNode(dataId);
   todo.classList.add("todo");
-  todo.innerHTML = `<div class="todo-text">
-                        <label for=${dataId}>
-                            <input type="checkbox" name="done" />
-                            <span >${value}</span>
-                        </label>
-                    </div>
-                    <div class="btn-container">
-                        <button class="edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>`;
+  todo.innerHTML = getNotCheckedTemplate(dataId, value);
 
   const editBtn = todo.querySelector(".edit");
   const deleteBtn = todo.querySelector(".delete");
@@ -68,7 +59,6 @@ function addTodo(e) {
 function deleteTodo(e) {
   const todo = e.currentTarget.parentElement.parentElement;
   let dataId = todo.getAttribute("data-id");
-  //   console.log(dataId);
   todos.removeChild(todo);
 
   deleteFromLocalStorage(dataId);
@@ -86,17 +76,7 @@ function editTodo(e) {
   const todoText = todo.querySelector("span").textContent;
   let dataId = todo.getAttribute("data-id");
 
-  todo.innerHTML = `<div class="todo-text">
-            <input type="text" name="title" id="title" value=${todoText} /> 
-            </div>
-            <div class="btn-container">
-                        <button class="edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-            </div>`;
+  todo.innerHTML = getEditTemplate(todoText);
 
   const editTodoInput = todo.querySelector("input");
   editTodoInput.focus();
@@ -111,35 +91,9 @@ function editTodo(e) {
 
     if (isChecked) {
       todo.classList.add("checked");
-      todo.innerHTML = `<div class="todo-text">
-                        <label for=${dataId}>
-                            <input type="checkbox" name="done" checked />
-                            <span class='line-through'>${editTodoValue}</span>
-                        </label>
-                    </div>
-                    <div class="btn-container">
-                        <button class="edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>`;
+      todo.innerHTML = getCheckedTemplate(dataId, editTodoValue);
     } else {
-      todo.innerHTML = `<div class="todo-text">
-                        <label for=${dataId}>
-                            <input type="checkbox" name="done" />
-                            <span >${editTodoValue}</span>
-                        </label>
-                    </div>
-                    <div class="btn-container">
-                        <button class="edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>`;
+      todo.innerHTML = getNotCheckedTemplate(dataId, editTodoValue);
     }
 
     const editBtn = todo.querySelector(".edit");
@@ -255,36 +209,10 @@ function setupTodos() {
 
       if (item.isChecked) {
         todo.classList.add("checked");
-        todo.innerHTML = `<div class="todo-text">
-                        <label for=${dataId}>
-                            <input type="checkbox" name="done" checked/>
-                            <span class='line-through'>${item.value}</span>
-                        </label>
-                    </div>
-                    <div class="btn-container">
-                        <button class="edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>`;
+        todo.innerHTML = getCheckedTemplate(dataId, item.value);
       } else {
         todo.classList.remove("checked");
-        todo.innerHTML = `<div class="todo-text">
-                        <label for=${dataId}>
-                            <input type="checkbox" name="done" />
-                            <span >${item.value}</span>
-                        </label>
-                    </div>
-                    <div class="btn-container">
-                        <button class="edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>`;
+        todo.innerHTML = getNotCheckedTemplate(dataId, item.value);
       }
 
       const editBtn = todo.querySelector(".edit");
