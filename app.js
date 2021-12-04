@@ -37,22 +37,13 @@ function addTodo(e) {
   todo.setAttributeNode(dataId);
   todo.classList.add("todo");
   todo.innerHTML = getNotCheckedTemplate(dataId, value);
+  getTodoBtns(todo);
 
-  const editBtn = todo.querySelector(".edit");
-  const deleteBtn = todo.querySelector(".delete");
-  const checkBtn = todo.querySelector("input[type='checkbox']");
-  editBtn.addEventListener("click", editTodo);
-  deleteBtn.addEventListener("click", deleteTodo);
-  checkBtn.addEventListener("click", checkTodo);
-
-  todos.appendChild(todo);
   todoInput.value = "";
+  todos.appendChild(todo);
   addToLocalStorage(id, value);
-
   displayAllAndDoneTodo();
-  if (todos.querySelectorAll(".todo").length > 0) {
-    document.querySelector("footer").classList.add("show");
-  }
+  toggleFooter();
 }
 
 // delete todo
@@ -62,11 +53,8 @@ function deleteTodo(e) {
   todos.removeChild(todo);
 
   deleteFromLocalStorage(dataId);
-
   displayAllAndDoneTodo();
-  if (todos.querySelectorAll(".todo").length <= 0) {
-    document.querySelector("footer").classList.remove("show");
-  }
+  toggleFooter();
 }
 
 // edit todo
@@ -79,8 +67,8 @@ function editTodo(e) {
   todo.innerHTML = getEditTemplate(todoText);
 
   const editTodoInput = todo.querySelector("input");
-  editTodoInput.focus();
 
+  editTodoInput.focus();
   editTodoInput.addEventListener("blur", () => {
     const editTodoValue = editTodoInput.value;
 
@@ -96,27 +84,19 @@ function editTodo(e) {
       todo.innerHTML = getNotCheckedTemplate(dataId, editTodoValue);
     }
 
-    const editBtn = todo.querySelector(".edit");
-    const deleteBtn = todo.querySelector(".delete");
-    const checkBtn = todo.querySelector("input[type='checkbox']");
-    editBtn.addEventListener("click", editTodo);
-    deleteBtn.addEventListener("click", deleteTodo);
-    checkBtn.addEventListener("click", checkTodo);
+    getTodoBtns(todo);
 
     editLocalStorage(dataId, editTodoValue);
-
     displayAllAndDoneTodo();
-    if (todos.querySelectorAll(".todo").length > 0) {
-      document.querySelector("footer").classList.add("show");
-    }
+    toggleFooter();
   });
 }
 
 // check todo
 function checkTodo(e) {
   const todo = e.currentTarget.parentElement.parentElement.parentElement;
-  let dataId = todo.getAttribute("data-id");
   const todoText = e.currentTarget.nextElementSibling;
+  let dataId = todo.getAttribute("data-id");
 
   if (e.target.checked) {
     todo.classList.add("checked");
@@ -142,15 +122,34 @@ function deleteDoneTodo() {
     displayAllAndDoneTodo();
   });
 
-  if (todos.querySelectorAll(".todo").length <= 0) {
-    document.querySelector("footer").classList.remove("show");
-  }
+  toggleFooter();
 }
 
 // display all todos amount and done todos amount
 function displayAllAndDoneTodo() {
   doneTodoCount.innerText = todos.querySelectorAll(".checked").length;
   allTodoCount.innerText = todos.querySelectorAll(".todo").length;
+}
+
+// toggle footer
+function toggleFooter() {
+  if (todos.querySelectorAll(".todo").length > 0) {
+    document.querySelector("footer").classList.add("show");
+  }
+
+  if (todos.querySelectorAll(".todo").length <= 0) {
+    document.querySelector("footer").classList.remove("show");
+  }
+}
+
+// get todo's btns and add event listner
+function getTodoBtns(todo) {
+  const editBtn = todo.querySelector(".edit");
+  const deleteBtn = todo.querySelector(".delete");
+  const checkBtn = todo.querySelector("input[type='checkbox']");
+  editBtn.addEventListener("click", editTodo);
+  deleteBtn.addEventListener("click", deleteTodo);
+  checkBtn.addEventListener("click", checkTodo);
 }
 
 /*  localstorage  */
@@ -215,16 +214,11 @@ function setupTodos() {
         todo.innerHTML = getNotCheckedTemplate(dataId, item.value);
       }
 
-      const editBtn = todo.querySelector(".edit");
-      const deleteBtn = todo.querySelector(".delete");
-      const checkBtn = todo.querySelector("input[type='checkbox']");
-      editBtn.addEventListener("click", editTodo);
-      deleteBtn.addEventListener("click", deleteTodo);
-      checkBtn.addEventListener("click", checkTodo);
+      getTodoBtns(todo);
 
       todos.appendChild(todo);
-      document.querySelector("footer").classList.add("show");
       displayAllAndDoneTodo();
+      toggleFooter();
     });
   }
 }
